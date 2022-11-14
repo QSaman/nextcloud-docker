@@ -25,6 +25,7 @@ services:
       - 127.0.0.1:8080:80
     volumes:
       - nextcloud:/var/www/html:z
+      - nextcloud-data:/var/www/html/data
     environment:
       - MYSQL_HOST=db
       - REDIS_HOST=redis
@@ -39,6 +40,7 @@ services:
     restart: always
     volumes:
       - nextcloud:/var/www/html:z
+      - nextcloud-data:/var/www/html/data
     entrypoint: /cron.sh
     depends_on:
       - db
@@ -47,3 +49,8 @@ services:
 volumes:
   db:
   nextcloud:
+  nextcloud-data:
+    driver_opts:
+      type: 'local'
+      o: 'bind'
+      device: '${NEXTCLOUD_DATA_EXTERNAL_DIR:?err}'
