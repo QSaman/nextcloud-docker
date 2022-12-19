@@ -18,7 +18,6 @@ services:
     restart: always
 
   app:
-    image: nextcloud:apache
     build: ../../../../dockerfiles/full/apache/
     restart: always
     ports:
@@ -31,9 +30,13 @@ services:
       - REDIS_HOST=redis
     env_file:
       - db.env
+      - app.env
     depends_on:
       - db
       - redis
+    networks:
+      - nginx-proxy_proxy-tier
+      - default
 
   cron:
     image: nextcloud:apache
@@ -54,3 +57,7 @@ volumes:
       type: 'local'
       o: 'bind'
       device: '${NEXTCLOUD_DATA_EXTERNAL_DIR:?err}'
+networks:
+  # If you don't use nginx-proxy continaer, comment external: true
+  nginx-proxy_proxy-tier:
+    external: true
